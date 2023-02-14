@@ -17,7 +17,7 @@ desc = 'find the H-alpha counter part'
 parser = arg.ArgumentParser(description = desc)
 
 parser.add_argument('-o', '--object', default = ' ', help = 'Input object name, default: " "')
-parser.add_argument('-c', '--coord', default = ' 0.0,0.0', help = 'Input decimal object coordinates in RA and Dec, e.g., "241.1743,-39.2209". Default: "0.0,0.0"')
+parser.add_argument('-c', '--coord', default = ' ', help = 'Input decimal object coordinates in RA and Dec, e.g., "241.1743,-39.2209". Default: "0.0,0.0"')
 
 args = parser.parse_args()
 
