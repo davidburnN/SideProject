@@ -12,6 +12,8 @@ import sys
 import pandas as pd
 import numpy as np
 from astropy.coordinates import SkyCoord
+from astropy import units as u
+from astroquery.simbad import Simbad
 
 desc = 'find the H-alpha counter part'
 parser = arg.ArgumentParser(description = desc)
@@ -31,7 +33,12 @@ if object == ' ':
 else:
 	print(f'    Target: {object}')
 
-if coord == ' ':
+if (coord == ' ') and (object != ' '):
+	coord = Simbad.query_object(object)
+	starcoord = SkyCoord(coord['RA'], coord['DEC'], unit = (u.hourangle, u.deg))
+	ra0, dec0 = starcoord.ra.degree[0], starcoord.dec.degree[0]
+	print(f'    Coordinates: {ra0:.5f}, {dec0:.5f}')
+elif coord == ' ':
 	print('    Please input coordinates of the object')
 	sys.exit()
 else:
@@ -40,8 +47,9 @@ else:
 		print(f'    Your input coordinates are not correct: {coord}')
 		print('    Please refer to "241.1743,-39.2209"')
 		sys.exit()
-	print(f'    Coordinates: {coord[0]}, {coord[1]}')
+	print(f'    Coordinates: {coord[0]:.5f}, {coord[1]:.5f}')
 	starcoord = SkyCoord(float(coord[0]), float(coord[1]), frame = 'icrs', unit = 'deg')
+	ra0, dec0 = starcoord.ra.degree, starcoord.dec.degree
 
 print('')
 print('Downloading the data...')
@@ -88,8 +96,6 @@ fits_data = fits_file[1].data
 fits_file.close()
 
 dataframe = pd.DataFrame(columns = range(len(fits_data[0])), index = range(3))
-
-ra0, dec0 = starcoord.ra.degree, starcoord.dec.degree
 
 for i in tqdm(range(len(fits_data))):
 	dataframe.loc[i] = fits_data[i]
